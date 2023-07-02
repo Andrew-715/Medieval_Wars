@@ -6,7 +6,6 @@ from equipment import Equipment
 from classes import unit_classes
 from unit import PlayerUnit, EnemyUnit
 
-
 app = Flask(__name__)
 
 heroes = {
@@ -14,7 +13,7 @@ heroes = {
     "enemy": ...
 }
 
-arena =  Arena()
+arena = Arena()
 
 
 @app.route("/")
@@ -26,6 +25,7 @@ def menu_page():
 def start_fight():
     arena.start_game(player=heroes['player'], enemy=heroes['enemy'])
     return render_template('fight.html', heroes=heroes)
+
 
 @app.route("/fight/hit")
 def hit():
@@ -75,7 +75,7 @@ def choose_hero():
             'armors': armors,
             'classes': unit_classes
         }
-        return  render_template('hero_choosing.html', result=result)
+        return render_template('hero_choosing.html', result=result)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -83,8 +83,12 @@ def choose_hero():
         armor_name = request.form['armor']
         unit_class_name = request.form['unit_class']
         player = PlayerUnit(name=name, unit_class=unit_classes.get(unit_class_name))
-        player.equip_armor(Equipment().get_armor(armor_name))
-        player.equip_weapon(Equipment().get_weapon(weapon_name))
+
+        if player.equip_armor(Equipment().get_armor(armor_name)) == None:
+            raise ValueError('Нет такой брони.')
+        if player.equip_weapon(Equipment().get_weapon(weapon_name)) == None:
+            raise ValueError('Нет такого оружия.')
+
         heroes['player'] = player
         return redirect(url_for('choose_enemy'))
 
@@ -102,7 +106,7 @@ def choose_enemy():
             'armors': armors,
             'classes': unit_classes
         }
-        return  render_template('hero_choosing.html', result=result)
+        return render_template('hero_choosing.html', result=result)
 
     if request.method == 'POST':
         name = request.form['name']
@@ -110,8 +114,12 @@ def choose_enemy():
         armor_name = request.form['armor']
         unit_class_name = request.form['unit_class']
         enemy = EnemyUnit(name=name, unit_class=unit_classes.get(unit_class_name))
-        enemy.equip_armor(Equipment().get_armor(armor_name))
-        enemy.equip_weapon(Equipment().get_weapon(weapon_name))
+
+        if enemy.equip_armor(Equipment().get_armor(armor_name)) == None:
+            raise ValueError('Нет такой брони.')
+        if enemy.equip_weapon(Equipment().get_weapon(weapon_name)) == None:
+            raise ValueError('Нет такого оружия.')
+
         heroes['player'] = enemy
         return redirect(url_for('start_fight'))
 

@@ -6,13 +6,7 @@ from random import randint
 
 
 class BaseUnit(ABC):
-    """
-    Базовый класс юнита
-    """
     def __init__(self, name: str, unit_class: UnitClass):
-        """
-        При инициализации класса Unit используем свойства класса UnitClass
-        """
         self.name = name
         self.unit_class = unit_class
         self.hp = unit_class.max_health
@@ -55,20 +49,9 @@ class BaseUnit(ABC):
 
     @abstractmethod
     def hit(self, target: BaseUnit) -> str:
-        """
-        этот метод будет переопределен ниже
-        """
         pass
 
     def use_skill(self, target: BaseUnit) -> str:
-        """
-        метод использования умения.
-        если умение уже использовано возвращаем строку
-        Навык использован
-        Если же умение не использовано тогда выполняем функцию
-        self.unit_class.skill.use(user=self, target=target)
-        и уже эта функция вернем нам строку которая характеризует выполнение умения
-        """
         if self._is_skill_used:
             return 'Навык уже был использован.'
 
@@ -80,16 +63,10 @@ class BaseUnit(ABC):
 class PlayerUnit(BaseUnit):
 
     def hit(self, target: BaseUnit) -> str:
-        """
-        функция удар игрока:
-        здесь происходит проверка достаточно ли выносливости для нанесения удара.
-        вызывается функция self._count_damage(target)
-        а также возвращается результат в виде строки
-        """
         if self.stamina < self.weapon.stamina_per_hit:
             return (
-                   f"{self.name} попытался использовать {self.weapon.name}, "
-                   f"но у него не хватило выносливости."
+                f"{self.name} попытался использовать {self.weapon.name}, "
+                f"но у него не хватило выносливости."
             )
 
         damage = self._count_damage(target)
@@ -107,21 +84,13 @@ class PlayerUnit(BaseUnit):
 class EnemyUnit(BaseUnit):
 
     def hit(self, target: BaseUnit) -> str:
-        """
-        функция удар соперника
-        должна содержать логику применения соперником умения
-        (он должен делать это автоматически и только 1 раз за бой).
-        Например, для этих целей можно использовать функцию randint из библиотеки random.
-        Если умение не применено, противник наносит простой удар, где также используется
-        функция _count_damage(target
-        """
         if not self._is_skill_used and self.stamina >= self.unit_class.skill.stamina and randint(0, 100) < 10:
             return self.use_skill(target)
 
         if self.stamina < self.weapon.stamina_per_hit:
             return (
-                   f"{self.name} попытался использовать {self.weapon.name}, "
-                   f"но у него не хватило выносливости."
+                f"{self.name} попытался использовать {self.weapon.name}, "
+                f"но у него не хватило выносливости."
             )
 
         damage = self._count_damage(target)

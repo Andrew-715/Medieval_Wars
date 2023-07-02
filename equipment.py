@@ -35,7 +35,6 @@ class EquipmentData:
 
 
 class Equipment:
-
     def __init__(self):
         self.equipment = self._get_equipment_data()
 
@@ -43,13 +42,13 @@ class Equipment:
         for weapon in self.equipment.weapons:
             if weapon.name == weapon_name:
                 return weapon
-        raise NotImplementedError
+        raise None
 
     def get_armor(self, armor_name: str) -> Optional[Armor]:
         for armor in self.equipment.armors:
             if armor.name == armor_name:
                 return armor
-        raise NotImplementedError
+        raise None
 
     def get_weapons_names(self) -> list:
         return [weapon.name for weapon in self.equipment.weapons]
